@@ -3,7 +3,7 @@ require 'date'
 
 options = Selenium::WebDriver::Chrome::Options.new
 options.add_argument('--headless')
-options.add_argument("--user-data-dir=" + ENV['YOUR_PROFILE_PATH'])
+# options.add_argument("--user-data-dir=" + ENV['YOUR_PROFILE_PATH'])
 driver = Selenium::WebDriver.for :chrome, options: options
 wait = Selenium::WebDriver::Wait.new(timeout: 10)
 
@@ -61,27 +61,19 @@ p '+++++++++++++++++++++++++'
 # gets
 select_task.select_by(:text, '保守・機能維持(04)  D0040007')
 
-driver.find_elements(:name, "minutes[]")[0].clear
+# driver.find_elements(:name, "minutes[]")[0].clear
 p '+++++++++++++++++++++++++'
-p 'What is your ?'
+p 'What is your time?'
 p '+++++++++++++++++++++++++'
+driver.find_elements(:name, "minutes[]")[0].text === ""
+driver.find_elements(:name, "minutes[]")[0].text === '00:10'
 # gets
-driver.find_elements(:name, "minutes[]")[0].send_keys('10:00')
 
 driver.find_element(:id, "save").location_once_scrolled_into_view
-p '+++++++++++++++++++++++++'
-p 'Time ?'
-p '+++++++++++++++++++++++++'
-# gets
-
-
-driver.find_element(:id, "save").click
-
-# wait.until {
-#   driver.find_element(:id, "edit-menu-contents").length === 0
-# }
-
-# driver.sleep(5000)
+driver.find_element(:id, "save").submit
+wait.until {
+  driver.execute_script("return document.readyState;") === "complete"
+}
 
 driver.save_screenshot "result.png"
 
@@ -89,4 +81,4 @@ driver.save_screenshot "result.png"
 
 driver.quit
 
-p "Save inputs"
+p "Save inputs and completed"
