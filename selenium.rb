@@ -36,40 +36,47 @@ wait.until {
   driver.find_element(:id, "edit-menu-contents").displayed?
 }
 
-p "Entering parameters .."
-
-driver.find_elements(:class, "btn-default")[0].click
-
-select_project = Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'projects[]')[0])
-
-select_project.options.each do |option|
-  p option.text + " => " + option.attribute("value")
+# 以下、繰り返されるエリア
+finished_sign = 'n'
+@index = 0
+until finished_sign != 'n' do
+  # プロジェクトの入力
+  driver.find_elements(:class, "btn-default")[0].click
+  select_project = Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'projects[]')[@index])
+  select_project.options.each do |option|
+    p option.text + " => " + option.attribute("value")
+  end
+  p '+++++++++++++++++++++++++'
+  p 'What is your projects num1ber?'
+  p '+++++++++++++++++++++++++'
+  input_project = gets.chomp
+  Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'projects[]')[@index]).select_by(:value, input_project)
+  
+  # タスクの入力
+  select_task = Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'tasks[]')[@index])
+  select_task.options.each do |option|
+    p option.text + " => " + option.attribute("value")
+  end
+  p '+++++++++++++++++++++++++'
+  p 'What is your task number?'
+  p '+++++++++++++++++++++++++'
+  input_task = gets.chomp
+  Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'tasks[]')[@index]).select_by(:value, input_task)
+  
+  # 工数の入力
+  p '+++++++++++++++++++++++++'
+  p 'What is your time(For example, you input 1hour => 01:00)?'
+  p '+++++++++++++++++++++++++'
+  input_time = gets.chomp
+  driver.find_elements(:class, "man-hour-input-time")[@index].send_keys(input_time)
+  
+  p "Finshed inputs? y/n"
+  finished_sign = gets.chomp
+  @index += 1
+  # on.changeを発火させるために、適当な場所をクリックし、有効にする
+  driver.find_element(:xpath, "//*[@id='edit-menu-contents']/table/tbody/tr[3]/td[2]/select").click
 end
 
-p '+++++++++++++++++++++++++'
-p 'What is your projects number?'
-p '+++++++++++++++++++++++++'
-input_project = gets.chomp
-select_project.select_by(:value, input_project)
-
-select_task = Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'tasks[]')[0])
-select_task.options.each do |option|
-  p option.text + " => " + option.attribute("value")
-end
-p '+++++++++++++++++++++++++'
-p 'What is your task number?'
-p '+++++++++++++++++++++++++'
-input_task = gets.chomp
-select_task.select_by(:value, input_task)
-
-p '+++++++++++++++++++++++++'
-p 'What is your time?'
-p '+++++++++++++++++++++++++'
-input_time = gets.chomp
-driver.find_elements(:class, "man-hour-input-time")[0].send_keys(input_time)
-
-# 最後にon.changeを発火させるために、適当な場所をクリックし、有効にする
-driver.find_elements(:class, "btn-default")[0].click
 driver.find_element(:id, "save").location_once_scrolled_into_view
 driver.find_element(:id, "save").submit
 
