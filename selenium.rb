@@ -3,7 +3,6 @@ require 'date'
 
 options = Selenium::WebDriver::Chrome::Options.new
 options.add_argument('--headless')
-# options.add_argument("--user-data-dir=" + ENV['YOUR_PROFILE_PATH'])
 driver = Selenium::WebDriver.for :chrome, options: options
 wait = Selenium::WebDriver::Wait.new(timeout: 10)
 
@@ -65,19 +64,22 @@ select_task.select_by(:text, '保守・機能維持(04)  D0040007')
 p '+++++++++++++++++++++++++'
 p 'What is your time?'
 p '+++++++++++++++++++++++++'
-driver.find_elements(:name, "minutes[]")[0].text === ""
-driver.find_elements(:name, "minutes[]")[0].text === '00:10'
+# driver.find_elements(:name, "minutes[]")[0].text === ""
+driver.find_elements(:class, "man-hour-input-time")[0].send_keys('00:10')
+
+# 最後にon.changeを発火させるために、適当な場所をクリックし、有効にする
+driver.find_elements(:class, "btn-default")[0].click
+
 # gets
 
 driver.find_element(:id, "save").location_once_scrolled_into_view
 driver.find_element(:id, "save").submit
+
 wait.until {
   driver.execute_script("return document.readyState;") === "complete"
 }
 
 driver.save_screenshot "result.png"
-
-# driver.manage.delete_all_cookies
 
 driver.quit
 
