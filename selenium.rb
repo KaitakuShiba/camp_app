@@ -41,45 +41,41 @@ p "Entering parameters .."
 driver.find_elements(:class, "btn-default")[0].click
 
 select_project = Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'projects[]')[0])
+
 select_project.options.each do |option|
-  p option.text
+  p option.text + " => " + option.attribute("value")
 end
+
 p '+++++++++++++++++++++++++'
-p 'What is your projects?'
+p 'What is your projects number?'
 p '+++++++++++++++++++++++++'
-# gets
-select_project.select_by(:text, '共通')
+input_project = gets.chomp
+select_project.select_by(:value, input_project)
 
 select_task = Selenium::WebDriver::Support::Select.new(driver.find_elements(:name, 'tasks[]')[0])
 select_task.options.each do |option|
-  p option.text
+  p option.text + " => " + option.attribute("value")
 end
 p '+++++++++++++++++++++++++'
-p 'What is your task?'
+p 'What is your task number?'
 p '+++++++++++++++++++++++++'
-# gets
-select_task.select_by(:text, '保守・機能維持(04)  D0040007')
+input_task = gets.chomp
+select_task.select_by(:value, input_task)
 
-# driver.find_elements(:name, "minutes[]")[0].clear
 p '+++++++++++++++++++++++++'
 p 'What is your time?'
 p '+++++++++++++++++++++++++'
-# driver.find_elements(:name, "minutes[]")[0].text === ""
-driver.find_elements(:class, "man-hour-input-time")[0].send_keys('00:10')
+input_time = gets.chomp
+driver.find_elements(:class, "man-hour-input-time")[0].send_keys(input_time)
 
 # 最後にon.changeを発火させるために、適当な場所をクリックし、有効にする
 driver.find_elements(:class, "btn-default")[0].click
-
-# gets
-
 driver.find_element(:id, "save").location_once_scrolled_into_view
 driver.find_element(:id, "save").submit
 
 wait.until {
   driver.execute_script("return document.readyState;") === "complete"
 }
-
-driver.save_screenshot "result.png"
 
 driver.quit
 
